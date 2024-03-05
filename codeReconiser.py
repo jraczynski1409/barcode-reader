@@ -1,5 +1,4 @@
 import cv2
-import matplotlib.pyplot as plt
 
 def clean_binary_line(binary_line):
     # Znajdź indeksy pierwszej i ostatniej sekwencji zer
@@ -15,22 +14,22 @@ def clean_binary_line(binary_line):
 
     return cleaned_line
 
-def find_sequence_length(binary_line, sequence):
-    # Konwertuj listę binarną na ciąg znaków
-    binary_string = ''.join(map(str, binary_line))
+def get_code_pattern(binary_line):
+    counter = 0;
+    code_pattern = []
 
-    # Znajdź indeksy początku i końca sekwencji
-    start_index = binary_string.find(sequence)
-    end_index = binary_string.rfind(sequence)
+    for i,x in enumerate(binary_line):
+        if(i!=len(binary_line)-1):
+            counter = counter + 1
+            if(x!=binary_line[i+1]):
+                code_pattern.append([counter,x])
+                counter = 0;
+        if(i==len(binary_line)-1):
+            code_pattern.append([counter,x])
+            counter = 0;
 
-    # Oblicz długość sekwencji
-    if start_index != -1 and end_index != -1:
-        sequence_length = end_index - start_index + len(sequence)
-    else:
-        sequence_length = 0
+    return code_pattern
 
-    return sequence_length
-    
 
 barcode = cv2.imread('1.png', cv2.IMREAD_GRAYSCALE)
 
@@ -45,5 +44,6 @@ line = barcode[row_index, : ]
 binaryLine = (line > 128).astype(int)
 
 cleaned_line = clean_binary_line(binaryLine)
-print(cleaned_line)
 
+print(len(cleaned_line))
+print(get_code_pattern(cleaned_line))
